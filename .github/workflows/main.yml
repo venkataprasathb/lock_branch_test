@@ -2,7 +2,7 @@ name: Lock Branch on Monday Night
 
 on:
   schedule:
-    - cron: '50 5 * * 4' # Every Monday at 00:00 UTC
+    - cron: '*/5 * * * *' # Every Monday at 00:00 UTC
 
 jobs:
   lock-branch:
@@ -14,8 +14,7 @@ jobs:
       - name: Lock Branch
         run: |
           BRANCH_NAME="lock_branch" # Replace with your branch name
-          TOKEN=$GITHUB_TOKEN
-          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/$BRANCH_NAME"
+          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/$BRANCH_NAME/protection"
           
           # Lock the branch using GitHub API
-          curl -X PATCH -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github.v3+json" $URL -d '{"protection": {"enabled": true}}'
+          curl -X PUT -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" $URL -d '{"lock_branch": true}'
