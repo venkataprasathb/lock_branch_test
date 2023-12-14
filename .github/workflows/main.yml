@@ -2,7 +2,7 @@ name: Lock Branch on Monday Night
 
 on:
   schedule:
-    - cron: '50 5 * * 4' # Every Monday at 00:00 UTC
+    - cron: '*/5 * * * *' # Every Monday at 00:00 UTC
 
 jobs:
   lock-branch:
