@@ -1,0 +1,21 @@
+name: Lock Branch on Monday Night
+
+on:
+  schedule:
+    - cron: '50 5 * * 4' # Every Monday at 00:00 UTC
+
+jobs:
+  lock-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Lock Branch
+        run: |
+          BRANCH_NAME="lock_branch" # Replace with your branch name
+          TOKEN=$GITHUB_TOKEN
+          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/$BRANCH_NAME"
+          
+          # Lock the branch using GitHub API
+          curl -X PATCH -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github.v3+json" $URL -d '{"protection": {"enabled": true}}'
