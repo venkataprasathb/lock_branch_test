@@ -1,4 +1,4 @@
-name: Lock Branch on Monday Night
+name: Create Tag using workflow
 
 on:
   schedule:
@@ -9,13 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Lock Branch
-        run: |
-          BRANCH_NAME="lock_branch" # Replace with your branch name
-          URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/$BRANCH_NAME/protection"
-          
-          # Lock the branch using GitHub API
-          curl -X PUT -H "Authorization: token ${{ secrets.PAT_TOKEN }}" -H "Accept: application/vnd.github.v3+json" $URL -d '{"lock_branch": true}'
+      - name: Set Dist Version
+        run: echo `date +'%Y-%m-%d'` >> $GITHUB_ENV
+      - name: Create Tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const {DIST_VERSION} = process.env          
+            github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${DIST_VERSION}`,
+                sha: context.sha
+            })
