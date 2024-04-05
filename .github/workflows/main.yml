@@ -10,15 +10,17 @@ jobs:
     permissions: write-all
     steps:
       - name: Set Dist Version
-        run: echo `date +'%Y-%m-%d'` >> $GITHUB_ENV
+        run: |
+          BUILD_VERSION="$(date %Y-%m-%d)"
+          echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
       - name: Create Tag
         uses: actions/github-script@v6
         with:
           script: |
-            const {DIST_VERSION} = process.env          
+            const {BUILD_VERSION} = process.env          
             github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: `refs/tags/${DIST_VERSION}`,
+                ref: `refs/tags/${BUILD_VERSION}`,
                 sha: context.sha
             })
