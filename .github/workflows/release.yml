@@ -1,0 +1,31 @@
+name: Create Branch using workflow
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Every Monday at 00:00 UTC
+
+jobs:
+  lock-branch:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Set Dist Version
+        run: |
+          BUILD_VERSION="$(date +'%Y%m%d')"
+          echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
+      - name: Create Tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const {BUILD_VERSION} = process.env   
+            const mainRef = (await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'heads/release/default',
+            })).data;
+            github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/heads/release/${BUILD_VERSION}`,
+                sha: mainRef.object.sha
+            })
