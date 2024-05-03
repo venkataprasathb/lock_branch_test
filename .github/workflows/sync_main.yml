@@ -23,3 +23,13 @@ jobs:
           FROM_BRANCH: "main"
           TO_BRANCH: "release/default"
           PULL_REQUEST_AUTO_MERGE_METHOD: "merge"
+      - name: Send message to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "url": "${{join(steps.pull.outputs.*, '\n')}}",
+            }
+        env:
+          SLACK_WEBHOOK_URL: "https://hooks.slack.com/triggers/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"
