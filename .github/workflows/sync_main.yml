@@ -29,7 +29,7 @@ jobs:
         with:
           payload: |
             {
-              "url": "${{join(steps.pull.outputs.*, '\n')}}",
+              "url": "${{ steps.pull.outputs.PULL_REQUEST_URL }}"
             }
         env:
           SLACK_WEBHOOK_URL: "https://hooks.slack.com/triggers/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"
